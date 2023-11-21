@@ -10,8 +10,8 @@ import Input from 'src/components/Input'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 import Button from 'src/components/Button'
-type FormData = Omit<Schema, 'confirm_password'>
-const loginSchema = schema.omit(['confirm_password'])
+type FormData = Pick<Schema, 'email' | 'password'>
+const loginSchema = schema.pick(['email', 'password'])
 export default function Login() {
   const { setIsAuthenticated, setProfile } = useContext(AppContext)
   const {
@@ -52,10 +52,10 @@ export default function Login() {
   return (
     <div className='bg-orange'>
       <div className='container'>
-        <div className='grid grid-cols-1 lg:grid-cols-5 py-12 lg:py-32 lg:pr-10'>
+        <div className='grid grid-cols-1 py-12 lg:grid-cols-5 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
             <form
-              className='p-10 rounded bg-white shadow-sm'
+              className='rounded bg-white p-10 shadow-sm'
               onSubmit={onSubmit}
               noValidate
             >
@@ -82,14 +82,14 @@ export default function Login() {
                   isLoading={loginMutation.isPending}
                   disabled={loginMutation.isPending}
                   type='submit'
-                  className='flex justify-center items-center w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600'
+                  className='flex w-full items-center justify-center bg-red-500 px-2 py-4 text-center text-sm uppercase text-white hover:bg-red-600'
                 >
                   Đăng nhập
                 </Button>
               </div>
-              <div className='flex items-center justify-center mt-8'>
+              <div className='mt-8 flex items-center justify-center'>
                 <span className='text-gray-400'>Bạn chưa có tài khoản?</span>
-                <Link to='/register' className='text-red-400 ml-2'>
+                <Link to='/register' className='ml-2 text-red-400'>
                   Đăng kí
                 </Link>
               </div>

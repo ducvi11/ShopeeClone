@@ -20,3 +20,7 @@ export function fotmatNumberToSocialStyle(value: number) {
     .replace('.', ',')
     .toLocaleLowerCase()
 }
+// cus phap `-?` sẽ loại bỏ undefiend của key aptional
+export type NoUndefinedField<T> = {
+  [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>>
+}

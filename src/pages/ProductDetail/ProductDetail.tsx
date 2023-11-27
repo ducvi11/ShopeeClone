@@ -19,7 +19,7 @@ import {
 import Product from '../ProductList/components/Product'
 import QuantityController from 'src/components/QuantityController'
 import purchaseApi from 'src/apis/purchase.api'
-import { purchaseStatus } from 'src/constants/purchase'
+import { purchasesStatus } from 'src/constants/purchase'
 import { toast } from 'react-toastify'
 type FormCart = {
   product_id: string
@@ -109,9 +109,9 @@ export default function ProductDetail() {
       },
       {
         onSuccess: (data) => {
-          toast.success(data.data.message)
+          toast.success(data.data.message, { autoClose: 1000 })
           queryClient.invalidateQueries({
-            queryKey: ['purchases', { status: purchaseStatus.inCart }]
+            queryKey: ['purchases', { status: purchasesStatus.inCart }]
           })
         }
       }

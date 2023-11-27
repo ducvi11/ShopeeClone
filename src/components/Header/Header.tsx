@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form'
 import { Schema, schema } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { omit, sortBy } from 'lodash'
-import { purchaseStatus } from 'src/constants/purchase'
+import { purchasesStatus } from 'src/constants/purchase'
 import purchaseApi from 'src/apis/purchase.api'
 import noproduct from 'src/assets/images/no-product.png'
 import classNames from 'classnames'
@@ -44,8 +44,8 @@ export default function Header() {
   // trừ trường hợp logout rồi nhảy sang RegisterLayout rồi nhảy vào lại
   // nên các query này không bị inactive => Không bị gọi lại => không cần thiết phải set stale : infinity
   const { data: purchasesInCartData } = useQuery({
-    queryKey: ['purchases', { status: purchaseStatus.inCart }],
-    queryFn: () => purchaseApi.getPurchases({ status: purchaseStatus.inCart })
+    queryKey: ['purchases', { status: purchasesStatus.inCart }],
+    queryFn: () => purchaseApi.getPurchases({ status: purchasesStatus.inCart })
   })
 
   const purchasesInCart = purchasesInCartData?.data.data

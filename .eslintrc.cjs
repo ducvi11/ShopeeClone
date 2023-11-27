@@ -1,21 +1,19 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path')
-
 module.exports = {
   extends: [
     // Chúng ta sẽ dùng các rule mặc định từ các plugin mà chúng ta đã cài.
     'eslint:recommended',
     'plugin:react/recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
     'plugin:import/recommended',
-    'plugin:import/typescript',
     'plugin:jsx-a11y/recommended',
+    'plugin:@typescript-eslint/recommended',
     // Disable các rule mà eslint xung đột với prettier.
     // Để cái này ở dưới để nó override các rule phía trên!.
     'eslint-config-prettier',
-    'prettier'
+    'prettier',
+    'plugin:storybook/recommended'
   ],
   plugins: ['prettier'],
   settings: {
@@ -26,7 +24,7 @@ module.exports = {
     // Nói ESLint cách xử lý các import
     'import/resolver': {
       node: {
-        paths: [path.resolve(__dirname, '')],
+        paths: [path.resolve(__dirname)],
         extensions: ['.js', '.jsx', '.ts', '.tsx']
       }
     }
@@ -35,11 +33,7 @@ module.exports = {
     node: true
   },
   rules: {
-    /* eslint-disable @typescript-eslint/no-var-requires */
-    '@typescript-eslint/no-var-requires': 'error',
     // Tắt rule yêu cầu import React trong file jsx
-    '@typescript-eslint/no-unused-vars': 'off',
-    'no-unused-vars': 'off',
     'react/react-in-jsx-scope': 'off',
     // Cảnh báo khi thẻ <a target='_blank'> mà không có rel="noreferrer"
     'react/jsx-no-target-blank': 'warn',
@@ -54,7 +48,7 @@ module.exports = {
         endOfLine: 'auto',
         useTabs: false,
         singleQuote: true,
-        printWidth: 90,
+        printWidth: 120,
         jsxSingleQuote: true
       }
     ]

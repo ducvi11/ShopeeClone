@@ -2,40 +2,21 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import AsideFilter from './components/AsideFilter'
 import Product from './components/Product'
 import SortProductList from './components/SortProductList'
-import useQueryParams from 'src/hooks/useQueryParams'
 import productApi from 'src/apis/product.api'
 import Pagination from 'src/components/Pagination'
 import { ProductListConfig } from 'src/types/product.type'
-import { isUndefined, omitBy } from 'lodash'
 import categoryApi from 'src/apis/category.api'
-
-export type QueryConfig = {
-  [key in keyof ProductListConfig]: string
-}
+import useQueryConfig from 'src/hooks/useQueryConfig'
 
 export default function ProductList() {
-  const queryParam: QueryConfig = useQueryParams()
-  const queryConfig: QueryConfig = omitBy(
-    {
-      page: queryParam.page || '1',
-      limit: queryParam.limit || '20',
-      sort_by: queryParam.sort_by,
-      exclude: queryParam.exclude,
-      order: queryParam.order,
-      name: queryParam.name,
-      price_max: queryParam.price_max,
-      price_min: queryParam.price_min,
-      rating_filter: queryParam.rating_filter,
-      category: queryParam.category
-    },
-    isUndefined
-  )
+  const queryConfig = useQueryConfig()
   const { data: productsData } = useQuery({
     queryKey: ['products', queryConfig],
     queryFn: () => {
       return productApi.getProducts(queryConfig as ProductListConfig)
     },
-    placeholderData: keepPreviousData
+    placeholderData: keepPreviousData,
+    staleTime: 3 * 60 * 1000
   })
   const { data: categoriesData } = useQuery({
     queryKey: ['categories'],
@@ -60,7 +41,7 @@ export default function ProductList() {
                 queryConfig={queryConfig}
                 pageSize={productsData.data.data.pagination.page_size}
               />
-              <div className='md:grid-cols3 mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-5'>
+              <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
                 {productsData.data.data.products.map((product) => (
                   <div className='col-span-1' key={product._id}>
                     <Product product={product} />

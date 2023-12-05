@@ -12,6 +12,7 @@ import RatingStars from '../RatingStars'
 import { omit } from 'lodash'
 import { QueryConfig } from 'src/hooks/useQueryConfig'
 import { NoUndefinedField } from 'src/utils/utils'
+import InputV2 from 'src/components/InputV2'
 interface Props {
   queryConfig: QueryConfig
   categories: Category[]
@@ -163,6 +164,18 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                 )
               }}
             />
+            {/* <InputV2
+              control={control}
+              name='price_min'
+              type='number'
+              className='grow'
+              onChange={() => {
+                trigger('price_max')
+              }}
+              classNameError='hidden'
+              placeholder='đ Từ'
+              classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
+            /> */}
             <div className='mx-2 mt-2 shrink-0'>-</div>
             <Controller
               control={control}

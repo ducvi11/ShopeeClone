@@ -1,4 +1,4 @@
-import UseRouteElements from './useRouteElements.tsx'
+import UseRouteElements from './useRouteElements'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 function App() {

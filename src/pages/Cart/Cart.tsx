@@ -3,6 +3,7 @@ import { produce } from 'immer'
 import { keyBy } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import purchaseApi from 'src/apis/purchase.api'
 import Button from 'src/components/Button'
 import QuantityController from 'src/components/QuantityController'
@@ -22,6 +23,22 @@ export default function Cart() {
     queryKey: ['purchases', { status: purchasesStatus.inCart }],
     queryFn: () => purchaseApi.getPurchases({ status: purchasesStatus.inCart })
   })
+  const buyProductsMutation = useMutation({
+    mutationFn: purchaseApi.buyProducts,
+    onSuccess: (data) => {
+      refetch()
+      toast.success(data.data.message, {
+        position: 'top-center',
+        autoClose: 1000
+      })
+    }
+  })
+  const deletePurchaseMutation = useMutation({
+    mutationFn: purchaseApi.deletePurchase,
+    onSuccess: () => {
+      refetch()
+    }
+  })
   const updatePurchaseMutation = useMutation({
     mutationFn: purchaseApi.updatePurchase,
     onSuccess: () => {
@@ -30,7 +47,17 @@ export default function Cart() {
   })
   const purchasesInCart = purchasesInCartData?.data.data
   const isAllChecked = extendedPurchases.every((purchase) => purchase.checked)
-
+  const checkedPurchases = extendedPurchases.filter((purchase) => purchase.checked)
+  const checkedPurchasesCount = checkedPurchases.length
+  const totalCheckedPurchasePrice = checkedPurchases.reduce((result, current) => {
+    return result + current.product.price * current.buy_count
+  }, 0)
+  const totalCheckedPurchaseSavingPrice = checkedPurchases.reduce((result, current) => {
+    return (
+      result +
+      (current.product.price_before_discount - current.product.price) * current.buy_count
+    )
+  }, 0)
   useEffect(() => {
     setExtendedPurchases((prev) => {
       const extendedPurchaseObject = keyBy(prev, '_id')
@@ -85,6 +112,26 @@ export default function Cart() {
     }
   }
 
+  const handleDelete = (purchaseIndex: number) => () => {
+    const purchaseId = extendedPurchases[purchaseIndex]._id
+    deletePurchaseMutation.mutate([purchaseId])
+  }
+
+  const handleDeleteManyPurchases = () => {
+    const purchasesIds = checkedPurchases.map((purchase) => purchase._id)
+    deletePurchaseMutation.mutate(purchasesIds)
+  }
+
+  const handleBuyPurchase = () => {
+    if (checkedPurchases.length > 0) {
+      const body = checkedPurchases.map((purchase) => ({
+        product_id: purchase.product._id,
+        buy_count: purchase.buy_count
+      }))
+      buyProductsMutation.mutate(body)
+    }
+  }
+
   return (
     <div className='bg-neutral-100 py-16'>
       <div className='container'>
@@ -113,104 +160,112 @@ export default function Cart() {
                 </div>
               </div>
             </div>
-            <div className='my-3 rounded-sm bg-white p-5 text-sm shadow'>
-              {extendedPurchases?.map((purchase, index) => (
-                <div
-                  key={purchase._id}
-                  className='fist:mt-0 grid grid-cols-12 rounded-sm border border-gray-200 bg-white px-4 py-5 text-center text-gray-500 last:mt-5'
-                >
-                  <div className='col-span-6'>
-                    <div className='flex '>
-                      <div className='flex flex-shrink-0 items-center justify-center pr-3'>
-                        <input
-                          type='checkbox'
-                          className='h-5 w-5 accent-orange'
-                          checked={purchase.checked}
-                          onChange={handleChecked(index)}
-                        />
-                      </div>
-                      <div className='flex-grow '>
-                        <div className='flex'>
-                          <Link
-                            to={`${path.home}${generateNameId({
-                              name: purchase.product.name,
-                              id: purchase.product._id
-                            })}`}
-                            className='h-20 w-20 flex-shrink-0'
-                          >
-                            <img
-                              alt={purchase.product.name}
-                              src={purchase.product.image}
-                            />
-                          </Link>
-                          <div className='flex-grow px-2 pb-2 pt-1'>
+            {extendedPurchases.length > 0 && (
+              <div className='my-3 rounded-sm bg-white p-5 text-sm shadow'>
+                {extendedPurchases?.map((purchase, index) => (
+                  <div
+                    key={purchase._id}
+                    className='fist:mt-0 grid grid-cols-12 items-center rounded-sm border border-gray-200 bg-white px-4 py-5 text-center text-gray-500 last:mt-5'
+                  >
+                    <div className='col-span-6'>
+                      <div className='flex '>
+                        <div className='flex flex-shrink-0 items-center justify-center pr-3'>
+                          <input
+                            type='checkbox'
+                            className='h-5 w-5 accent-orange'
+                            checked={purchase.checked}
+                            onChange={handleChecked(index)}
+                          />
+                        </div>
+                        <div className='flex-grow '>
+                          <div className='flex'>
                             <Link
                               to={`${path.home}${generateNameId({
                                 name: purchase.product.name,
                                 id: purchase.product._id
                               })}`}
-                              className='line-clamp-2'
+                              className='h-20 w-20 flex-shrink-0'
                             >
-                              {purchase.product.name}
+                              <img
+                                alt={purchase.product.name}
+                                src={purchase.product.image}
+                              />
                             </Link>
+                            <div className='flex-grow px-2 pb-2 pt-1 text-left'>
+                              <Link
+                                to={`${path.home}${generateNameId({
+                                  name: purchase.product.name,
+                                  id: purchase.product._id
+                                })}`}
+                                className='line-clamp-2'
+                              >
+                                {purchase.product.name}
+                              </Link>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className='col-span-6'>
-                    <div className='grid grid-cols-5 items-center'>
-                      <div className='col-span-2'>
-                        <div className='flex items-center justify-center'>
-                          <span className='line-throught text-gray-300'>
-                            đ{formatCurrency(purchase.product.price_before_discount)}
-                          </span>
-                          <span className='ml-3'>
-                            đ{formatCurrency(purchase.product.price)}
+                    <div className='col-span-6'>
+                      <div className='grid grid-cols-5 items-center'>
+                        <div className='col-span-2'>
+                          <div className='flex items-center justify-center'>
+                            <span className='line-throught text-gray-300'>
+                              đ{formatCurrency(purchase.product.price_before_discount)}
+                            </span>
+                            <span className='ml-3'>
+                              đ{formatCurrency(purchase.product.price)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className='col-span-1'>
+                          <QuantityController
+                            max={purchase.product.quantity}
+                            value={purchase.buy_count}
+                            classNameWrapper='flex items-center'
+                            onIncrease={(value) =>
+                              handleQuantity(
+                                index,
+                                value,
+                                value <= purchase.product.quantity
+                              )
+                            }
+                            onDecrease={(value) =>
+                              handleQuantity(index, value, value >= 1)
+                            }
+                            disabled={purchase.disabled}
+                            onType={handleTypeQuantity(index)}
+                            onFocusOut={(value) =>
+                              handleQuantity(
+                                index,
+                                value,
+                                value >= 1 &&
+                                  value <= purchase.product.quantity &&
+                                  value !==
+                                    (purchasesInCart as Purchase[])[index].buy_count
+                              )
+                            }
+                          />
+                        </div>
+                        <div className='col-span-1'>
+                          <span className='text-orange'>
+                            đ{formatCurrency(purchase.product.price * purchase.buy_count)}
                           </span>
                         </div>
-                      </div>
-                      <div className='col-span-1'>
-                        <QuantityController
-                          max={purchase.product.quantity}
-                          value={purchase.buy_count}
-                          classNameWrapper='flex items-center'
-                          onIncrease={(value) =>
-                            handleQuantity(
-                              index,
-                              value,
-                              value <= purchase.product.quantity
-                            )
-                          }
-                          onDecrease={(value) => handleQuantity(index, value, value >= 1)}
-                          disabled={purchase.disabled}
-                          onType={handleTypeQuantity(index)}
-                          onFocusOut={(value) =>
-                            handleQuantity(
-                              index,
-                              value,
-                              value >= 1 &&
-                                value <= purchase.product.quantity &&
-                                value !== (purchasesInCart as Purchase[])[index].buy_count
-                            )
-                          }
-                        />
-                      </div>
-                      <div className='col-span-1'>
-                        <span className='text-orange'>
-                          đ{formatCurrency(purchase.product.price * purchase.buy_count)}
-                        </span>
-                      </div>
-                      <div className='col-span-1'>
-                        <button className='bg-none text-black transition-colors hover:text-orange'>
-                          Xoá
-                        </button>
+                        <div className='col-span-1'>
+                          <button
+                            onClick={handleDelete(index)}
+                            className='bg-none text-black transition-colors hover:text-orange'
+                          >
+                            Xoá
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         <div className='sticky bottom-0 z-10 mt-8 flex flex-col rounded-sm border border-gray-100 bg-white p-5 shadow sm:flex-row sm:items-center'>
@@ -226,20 +281,33 @@ export default function Cart() {
             <button className='mx-3 border-none bg-none' onClick={handleCheckAll}>
               Chọn tất cả ({extendedPurchases.length})
             </button>
-            <button className='mx-3 border-none bg-none'>Xoá</button>
+            <button
+              onClick={handleDeleteManyPurchases}
+              className='mx-3 border-none bg-none'
+            >
+              Xoá
+            </button>
           </div>
           <div className='mt-5 flex flex-col sm:ml-auto sm:mt-0 sm:flex-row sm:items-center'>
             <div>
               <div className='flex items-center sm:justify-end'>
-                <div>Tổng thanh toán(0 sản phẩm):</div>
-                <div className='ml-2 text-2xl text-orange'>đ138000</div>
+                <div>Tổng thanh toán({checkedPurchasesCount}):</div>
+                <div className='ml-2 text-2xl text-orange'>
+                  đ{formatCurrency(totalCheckedPurchasePrice)}
+                </div>
               </div>
               <div className='flex items-center text-sm sm:justify-end'>
                 <div className='text-gray-500'>Tiết kiệm</div>
-                <div className='ml-6 text-orange'>đ138000</div>
+                <div className='ml-6 text-orange'>
+                  đ{formatCurrency(totalCheckedPurchaseSavingPrice)}
+                </div>
               </div>
             </div>
-            <Button className='mt-5 flex h-10 w-52 items-center justify-center bg-red-500 text-center text-sm uppercase text-white hover:bg-red-600 sm:ml-4 sm:mt-0'>
+            <Button
+              className='mt-5 flex h-10 w-52 items-center justify-center bg-red-500 text-center text-sm uppercase text-white hover:bg-red-600 sm:ml-4 sm:mt-0'
+              onClick={handleBuyPurchase}
+              disabled={buyProductsMutation.isPending}
+            >
               Mua hàng
             </Button>
           </div>

@@ -10,6 +10,7 @@ import Input from 'src/components/Input'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 import Button from 'src/components/Button'
+import { toast } from 'react-toastify'
 type FormData = Pick<Schema, 'email' | 'password'>
 const loginSchema = schema.pick(['email', 'password'])
 export default function Login() {
@@ -31,6 +32,10 @@ export default function Login() {
   const onSubmit = handleSubmit((data) => {
     loginMutation.mutate(data, {
       onSuccess: (data) => {
+        toast.success(data.data.message, {
+          position: 'top-right',
+          autoClose: 2000
+        })
         setIsAuthenticated(true)
         setProfile(data.data.data.user)
       },

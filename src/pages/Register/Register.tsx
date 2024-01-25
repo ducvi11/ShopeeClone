@@ -11,6 +11,7 @@ import { ErrorResponse } from 'src/types/utils.type'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 import Button from 'src/components/Button/Button'
+import { toast } from 'react-toastify'
 
 type FormData = Pick<Schema, 'email' | 'password' | 'confirm_password'>
 const registerSchema = schema.pick(['email', 'password', 'confirm_password'])
@@ -33,6 +34,10 @@ export default function Register() {
     const body = omit(data, ['confirm_password'])
     registerAccountMutation.mutate(body, {
       onSuccess: (data) => {
+        toast.success(data.data.message, {
+          position: 'top-left',
+          autoClose: 2000
+        })
         setIsAuthenticated(true)
         setProfile(data.data.data.user)
       },

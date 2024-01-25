@@ -14,9 +14,7 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
   const page = Number(queryConfig.page)
   const { sort_by = sortBy.createdAt, order } = queryConfig
   const navigate = useNavigate()
-  const isActiveSortBy = (
-    sortByValue: Exclude<ProductListConfig['sort_by'], undefined>
-  ) => {
+  const isActiveSortBy = (sortByValue: Exclude<ProductListConfig['sort_by'], undefined>) => {
     return sort_by === sortByValue
   }
   const handleSort = (sortByValue: Exclude<ProductListConfig['sort_by'], undefined>) => {
@@ -33,9 +31,7 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
       ).toString()
     })
   }
-  const handlePriceOrder = (
-    orderValue: Exclude<ProductListConfig['order'], undefined>
-  ) => {
+  const handlePriceOrder = (orderValue: Exclude<ProductListConfig['order'], undefined>) => {
     navigate({
       pathname: path.home,
       search: createSearchParams({
@@ -79,18 +75,11 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
           </button>
           <select
             value={order || ''}
-            className={classNames(
-              'h-8 px-4 text-left text-sm capitalize  outline-none ',
-              {
-                'bg-orange text-white hover:bg-orange/80': isActiveSortBy(sortBy.price),
-                'bg-white text-black hover:bg-slate-100': !isActiveSortBy(sortBy.price)
-              }
-            )}
-            onChange={(event) =>
-              handlePriceOrder(
-                event.target.value as Exclude<ProductListConfig['order'], undefined>
-              )
-            }
+            className={classNames('h-8 px-4 text-left text-sm capitalize  outline-none ', {
+              'bg-orange text-white hover:bg-orange/80': isActiveSortBy(sortBy.price),
+              'bg-white text-black hover:bg-slate-100': !isActiveSortBy(sortBy.price)
+            })}
+            onChange={(event) => handlePriceOrder(event.target.value as Exclude<ProductListConfig['order'], undefined>)}
           >
             <option className='bg-white text-black' value='' disabled>
               Giá
@@ -120,11 +109,7 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
                   stroke='currentColor'
                   className='h-3 w-3'
                 >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M15.75 19.5L8.25 12l7.5-7.5'
-                  />
+                  <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
                 </svg>
               </span>
             ) : (
@@ -146,11 +131,7 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
                   stroke='currentColor'
                   className='h-3 w-3'
                 >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M15.75 19.5L8.25 12l7.5-7.5'
-                  />
+                  <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
                 </svg>
               </Link>
             )}
@@ -164,11 +145,7 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
                   stroke='currentColor'
                   className='h-3 w-3'
                 >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M8.25 4.5l7.5 7.5-7.5 7.5'
-                  />
+                  <path strokeLinecap='round' strokeLinejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' />
                 </svg>
               </span>
             ) : (
@@ -190,11 +167,7 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
                   stroke='currentColor'
                   className='h-3 w-3'
                 >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M8.25 4.5l7.5 7.5-7.5 7.5'
-                  />
+                  <path strokeLinecap='round' strokeLinejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' />
                 </svg>
               </Link>
             )}

@@ -1,10 +1,5 @@
 import React, { InputHTMLAttributes, useState } from 'react'
-import {
-  FieldPath,
-  FieldValues,
-  UseControllerProps,
-  useController
-} from 'react-hook-form'
+import { FieldPath, FieldValues, UseControllerProps, useController } from 'react-hook-form'
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 export type InputNumberProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -32,8 +27,7 @@ function InputV2<
   const [localValue, setLocalValue] = useState<string>(field.value)
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const valueFromInput = event.target.value
-    const numberCondition =
-      type === 'number' && (/^\d+$/.test(valueFromInput) || valueFromInput === '')
+    const numberCondition = type === 'number' && (/^\d+$/.test(valueFromInput) || valueFromInput === '')
     if (numberCondition || type !== 'number') {
       //thực thi onChange callback từ bên ngoài truyền vào props
       setLocalValue(valueFromInput)
@@ -45,13 +39,7 @@ function InputV2<
   }
   return (
     <div className={className}>
-      <input
-        {...rest}
-        {...field}
-        className={classNameInput}
-        value={value || localValue}
-        onChange={handleChange}
-      />
+      <input {...rest} {...field} className={classNameInput} value={value || localValue} onChange={handleChange} />
       <div className={classNameError}>{fieldState.error?.message}</div>
     </div>
   )

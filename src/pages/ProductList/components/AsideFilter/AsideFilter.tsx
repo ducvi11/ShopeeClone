@@ -44,8 +44,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
   })
   const navigate = useNavigate()
   const valueForm = watch()
-
-  console.log(errors)
+  //console.log(errors)
   const onSubmit = handleSubmit((data) => {
     navigate({
       pathname: path.home,
@@ -59,9 +58,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
   const handleRemoveAll = () => {
     navigate({
       pathname: path.home,
-      search: createSearchParams(
-        omit(queryConfig, ['price_max', 'price_min', 'rating_filter', 'category'])
-      ).toString()
+      search: createSearchParams(omit(queryConfig, ['price_max', 'price_min', 'rating_filter', 'category'])).toString()
     })
   }
   return (
@@ -106,10 +103,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                 })}
               >
                 {isActive && (
-                  <svg
-                    viewBox='0 0 4 7'
-                    className='absolute left-[-10px] top-1 h-2 w-2 fill-orange'
-                  >
+                  <svg viewBox='0 0 4 7' className='absolute left-[-10px] top-1 h-2 w-2 fill-orange'>
                     <polygon points='4 3.5 0 0 0 7' />
                   </svg>
                 )}
@@ -198,9 +192,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
               }}
             />
           </div>
-          <div className='mt-1 min-h-[1.25rem] text-center text-sm text-red-600'>
-            {errors.price_min?.message}
-          </div>
+          <div className='mt-1 min-h-[1.25rem] text-center text-sm text-red-600'>{errors.price_min?.message}</div>
           <Button className='flex w-full items-center justify-center bg-orange p-2 text-sm uppercase text-white hover:bg-orange/80'>
             Áp dụng
           </Button>

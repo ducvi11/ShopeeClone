@@ -1,16 +1,15 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Popover from '../Popover'
 import { AppContext } from 'src/contexts/app.context'
 import { Link } from 'react-router-dom'
 import path from 'src/constants/path'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import authApi from 'src/apis/auth.api'
-import { queryClient } from 'src/main'
 import { purchasesStatus } from 'src/constants/purchase'
-
+import { getAvatarUrl } from 'src/utils/utils'
 export default function NavHeader() {
-  const { setIsAuthenticated, isAuthenticated, setProfile, profile } =
-    useContext(AppContext)
+  const { setIsAuthenticated, isAuthenticated, setProfile, profile } = useContext(AppContext)
+  const queryClient = useQueryClient()
   const logoutMutation = useMutation({
     mutationFn: authApi.logout,
     onSuccess: () => {
@@ -21,9 +20,14 @@ export default function NavHeader() {
       })
     }
   })
+  // useEffect(() => {
+  //   console.log('NavHeader rendered')
+  // }, [profile]) // Thay đổi khi profile thay đổi
   const handleLogout = () => {
     logoutMutation.mutate()
   }
+  //console.log('re-render', profile)
+
   return (
     <div className='flex justify-end'>
       <Popover
@@ -61,11 +65,7 @@ export default function NavHeader() {
           stroke='currentColor'
           className='h-6 w-6'
         >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            d='M19.5 8.25l-7.5 7.5-7.5-7.5'
-          />
+          <path strokeLinecap='round' strokeLinejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' />
         </svg>
       </Popover>
       {isAuthenticated && (
@@ -95,11 +95,7 @@ export default function NavHeader() {
           }
         >
           <div className='mr-2 h-6 w-6 flex-shrink-0'>
-            <img
-              className='h-full w-full rounded-full object-cover'
-              src='https://down-vn.img.susercontent.com/file/8a808efea0e2e9fe1f716cc86f5015e3_tn'
-              alt='avatar'
-            />
+            <img src={getAvatarUrl(profile?.avatar)} className='h-full w-full rounded-full object-cover' alt='avatar' />
           </div>
           <div>{profile?.email}</div>
         </Popover>

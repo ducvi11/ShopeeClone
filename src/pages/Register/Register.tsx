@@ -1,16 +1,16 @@
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { Schema, schema } from '../../utils/rules.ts'
+import { Schema, schema } from '../../utils/rules'
 import Input from '../../components/Input'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
-import authApi from 'src/apis/auth.api.ts'
+import authApi from 'src/apis/auth.api'
 import { omit } from 'lodash'
-import { isAxiosUnprocessableEntityError } from 'src/utils/utils.ts'
-import { ErrorResponse } from 'src/types/utils.type.ts'
+import { isAxiosUnprocessableEntityError } from 'src/utils/utils'
+import { ErrorResponse } from 'src/types/utils.type'
 import { useContext } from 'react'
-import { AppContext } from 'src/contexts/app.context.tsx'
-import Button from 'src/components/Button/Button.tsx'
+import { AppContext } from 'src/contexts/app.context'
+import Button from 'src/components/Button/Button'
 
 type FormData = Pick<Schema, 'email' | 'password' | 'confirm_password'>
 const registerSchema = schema.pick(['email', 'password', 'confirm_password'])
@@ -27,8 +27,7 @@ export default function Register() {
     resolver: yupResolver(registerSchema)
   })
   const registerAccountMutation = useMutation({
-    mutationFn: (body: Omit<FormData, 'confirm_password'>) =>
-      authApi.registerAccount(body)
+    mutationFn: (body: Omit<FormData, 'confirm_password'>) => authApi.registerAccount(body)
   })
   const onSubmit = handleSubmit((data) => {
     const body = omit(data, ['confirm_password'])
@@ -38,11 +37,7 @@ export default function Register() {
         setProfile(data.data.data.user)
       },
       onError: (error) => {
-        if (
-          isAxiosUnprocessableEntityError<
-            ErrorResponse<Omit<FormData, 'confirm_password'>>
-          >(error)
-        ) {
+        if (isAxiosUnprocessableEntityError<ErrorResponse<Omit<FormData, 'confirm_password'>>>(error)) {
           const formError = error.response?.data.data
           if (formError) {
             Object.keys(formError).forEach((key) => {
@@ -65,11 +60,7 @@ export default function Register() {
       <div className='container'>
         <div className='grid grid-cols-1 py-12 lg:grid-cols-5 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
-            <form
-              className='rounded bg-white p-10 shadow-sm'
-              onSubmit={onSubmit}
-              noValidate
-            >
+            <form className='rounded bg-white p-10 shadow-sm' onSubmit={onSubmit} noValidate>
               <div className='text-2xl'>Đăng Ký</div>
               <Input
                 type='email'
@@ -121,7 +112,4 @@ export default function Register() {
       </div>
     </div>
   )
-}
-function setIsAuthenticated(arg0: boolean) {
-  throw new Error('Function not implemented.')
 }

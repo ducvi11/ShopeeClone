@@ -1,14 +1,9 @@
-import { Link, createSearchParams, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Popover from '../Popover'
 import { useQuery } from '@tanstack/react-query'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 import path from 'src/constants/path'
-import useQueryConfig from 'src/hooks/useQueryConfig'
-import { useForm } from 'react-hook-form'
-import { Schema, schema } from 'src/utils/rules'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { omit } from 'lodash'
 import { purchasesStatus } from 'src/constants/purchase'
 import purchaseApi from 'src/apis/purchase.api'
 import noproduct from 'src/assets/images/no-product.png'
@@ -80,10 +75,7 @@ export default function Header() {
                       <div className='capitalize text-gray-400'>Sản phẩm mới thêm</div>
                       <div className='mt-5'>
                         {purchasesInCart.slice(0, MAX_PURCHASES).map((purchase) => (
-                          <div
-                            className='mt-2 flex py-2 hover:bg-gray-100'
-                            key={purchase._id}
-                          >
+                          <div className='mt-2 flex py-2 hover:bg-gray-100' key={purchase._id}>
                             <div className='flex-shrink-0'>
                               <img
                                 src={purchase.product.image}
@@ -95,18 +87,14 @@ export default function Header() {
                               <div className='trumcate'>{purchase.product.name}</div>
                             </div>
                             <div className='ml-2 flex-shrink-0'>
-                              <span className='text-orange'>
-                                {formatCurrency(purchase.product.price)}
-                              </span>
+                              <span className='text-orange'>{formatCurrency(purchase.product.price)}</span>
                             </div>
                           </div>
                         ))}
                       </div>
                       <div className='mt-6 flex items-center justify-between'>
                         <div className='text-sm capitalize text-gray-500'>
-                          {purchasesInCart.length > MAX_PURCHASES
-                            ? purchasesInCart.length - MAX_PURCHASES
-                            : ' '}
+                          {purchasesInCart.length > MAX_PURCHASES ? purchasesInCart.length - MAX_PURCHASES : ' '}
                           Thêm hàng vào giỏ
                         </div>
                         <Link

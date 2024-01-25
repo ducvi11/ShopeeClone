@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { produce } from 'immer'
 import { keyBy } from 'lodash'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import purchaseApi from 'src/apis/purchase.api'
@@ -43,17 +43,10 @@ export default function Cart() {
   })
   const location = useLocation()
   //console.log(location.state)
-  const choosenPurchaseIdFromLocation = (location.state as { purchaseId: string } | null)
-    ?.purchaseId
+  const choosenPurchaseIdFromLocation = (location.state as { purchaseId: string } | null)?.purchaseId
   const purchasesInCart = purchasesInCartData?.data.data
-  const isAllChecked = useMemo(
-    () => extendedPurchases.every((purchase) => purchase.checked),
-    [extendedPurchases]
-  )
-  const checkedPurchases = useMemo(
-    () => extendedPurchases.filter((purchase) => purchase.checked),
-    [extendedPurchases]
-  )
+  const isAllChecked = useMemo(() => extendedPurchases.every((purchase) => purchase.checked), [extendedPurchases])
+  const checkedPurchases = useMemo(() => extendedPurchases.filter((purchase) => purchase.checked), [extendedPurchases])
   const checkedPurchasesCount = checkedPurchases.length
   const totalCheckedPurchasePrice = useMemo(
     () =>
@@ -65,11 +58,7 @@ export default function Cart() {
   const totalCheckedPurchaseSavingPrice = useMemo(
     () =>
       checkedPurchases.reduce((result, current) => {
-        return (
-          result +
-          (current.product.price_before_discount - current.product.price) *
-            current.buy_count
-        )
+        return result + (current.product.price_before_discount - current.product.price) * current.buy_count
       }, 0),
     [checkedPurchases]
   )
@@ -79,19 +68,16 @@ export default function Cart() {
       //console.log(extendedPurchaseObject)
       return (
         purchasesInCart?.map((purchase) => {
-          const isChoosenPurchaseFromLocation =
-            choosenPurchaseIdFromLocation === purchase._id
+          const isChoosenPurchaseFromLocation = choosenPurchaseIdFromLocation === purchase._id
           return {
             ...purchase,
             disabled: false,
-            checked:
-              isChoosenPurchaseFromLocation ||
-              Boolean(extendedPurchasesObject[purchase._id]?.checked)
+            checked: isChoosenPurchaseFromLocation || Boolean(extendedPurchasesObject[purchase._id]?.checked)
           }
         }) || []
       )
     })
-  }, [purchasesInCart, choosenPurchaseIdFromLocation])
+  }, [purchasesInCart, choosenPurchaseIdFromLocation, setExtendedPurchases])
 
   useEffect(() => {
     return () => {
@@ -99,14 +85,13 @@ export default function Cart() {
     }
   }, [])
 
-  const handleChecked =
-    (purchaseIndex: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      setExtendedPurchases(
-        produce((draft) => {
-          draft[purchaseIndex].checked = event.target.checked
-        })
-      )
-    }
+  const handleChecked = (purchaseIndex: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setExtendedPurchases(
+      produce((draft) => {
+        draft[purchaseIndex].checked = event.target.checked
+      })
+    )
+  }
   const handleCheckAll = () => {
     setExtendedPurchases((prev) =>
       prev.map((purchase) => ({
@@ -215,10 +200,7 @@ export default function Cart() {
                                   })}`}
                                   className='h-20 w-20 flex-shrink-0'
                                 >
-                                  <img
-                                    alt={purchase.product.name}
-                                    src={purchase.product.image}
-                                  />
+                                  <img alt={purchase.product.name} src={purchase.product.image} />
                                 </Link>
                                 <div className='flex-grow px-2 pb-2 pt-1 text-left'>
                                   <Link
@@ -240,12 +222,9 @@ export default function Cart() {
                             <div className='col-span-2'>
                               <div className='flex items-center justify-center'>
                                 <span className='line-throught text-gray-300'>
-                                  đ
-                                  {formatCurrency(purchase.product.price_before_discount)}
+                                  đ{formatCurrency(purchase.product.price_before_discount)}
                                 </span>
-                                <span className='ml-3'>
-                                  đ{formatCurrency(purchase.product.price)}
-                                </span>
+                                <span className='ml-3'>đ{formatCurrency(purchase.product.price)}</span>
                               </div>
                             </div>
                             <div className='col-span-1'>
@@ -253,16 +232,8 @@ export default function Cart() {
                                 max={purchase.product.quantity}
                                 value={purchase.buy_count}
                                 classNameWrapper='flex items-center'
-                                onIncrease={(value) =>
-                                  handleQuantity(
-                                    index,
-                                    value,
-                                    value <= purchase.product.quantity
-                                  )
-                                }
-                                onDecrease={(value) =>
-                                  handleQuantity(index, value, value >= 1)
-                                }
+                                onIncrease={(value) => handleQuantity(index, value, value <= purchase.product.quantity)}
+                                onDecrease={(value) => handleQuantity(index, value, value >= 1)}
                                 disabled={purchase.disabled}
                                 onType={handleTypeQuantity(index)}
                                 onFocusOut={(value) =>
@@ -271,18 +242,14 @@ export default function Cart() {
                                     value,
                                     value >= 1 &&
                                       value <= purchase.product.quantity &&
-                                      value !==
-                                        (purchasesInCart as Purchase[])[index].buy_count
+                                      value !== (purchasesInCart as Purchase[])[index].buy_count
                                   )
                                 }
                               />
                             </div>
                             <div className='col-span-1'>
                               <span className='text-orange'>
-                                đ
-                                {formatCurrency(
-                                  purchase.product.price * purchase.buy_count
-                                )}
+                                đ{formatCurrency(purchase.product.price * purchase.buy_count)}
                               </span>
                             </div>
                             <div className='col-span-1'>
@@ -314,10 +281,7 @@ export default function Cart() {
                 <button className='mx-3 border-none bg-none' onClick={handleCheckAll}>
                   Chọn tất cả ({extendedPurchases.length})
                 </button>
-                <button
-                  onClick={handleDeleteManyPurchases}
-                  className='mx-3 border-none bg-none'
-                >
+                <button onClick={handleDeleteManyPurchases} className='mx-3 border-none bg-none'>
                   Xoá
                 </button>
               </div>
@@ -325,15 +289,11 @@ export default function Cart() {
                 <div>
                   <div className='flex items-center sm:justify-end'>
                     <div>Tổng thanh toán({checkedPurchasesCount}):</div>
-                    <div className='ml-2 text-2xl text-orange'>
-                      đ{formatCurrency(totalCheckedPurchasePrice)}
-                    </div>
+                    <div className='ml-2 text-2xl text-orange'>đ{formatCurrency(totalCheckedPurchasePrice)}</div>
                   </div>
                   <div className='flex items-center text-sm sm:justify-end'>
                     <div className='text-gray-500'>Tiết kiệm</div>
-                    <div className='ml-6 text-orange'>
-                      đ{formatCurrency(totalCheckedPurchaseSavingPrice)}
-                    </div>
+                    <div className='ml-6 text-orange'>đ{formatCurrency(totalCheckedPurchaseSavingPrice)}</div>
                   </div>
                 </div>
                 <Button
@@ -350,9 +310,7 @@ export default function Cart() {
           <div className=' text-center'>
             <img src={noproduct} alt='no product' className='mx-auto h-24 w-24' />
 
-            <div className='mt-5 font-bold text-gray-400 '>
-              Giỏ hàng của bạn còn trống
-            </div>
+            <div className='mt-5 font-bold text-gray-400 '>Giỏ hàng của bạn còn trống</div>
             <div className='mt-5 text-center'>
               <Link
                 className=' rounded-sm bg-orange px-10 py-3 uppercase text-white transition-all hover:bg-orange/80 '

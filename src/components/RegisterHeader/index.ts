@@ -1,3 +1,3 @@
-import RegisterHeader from './RegisterHeader.tsx'
+import RegisterHeader from './RegisterHeader'
 
 export default RegisterHeader

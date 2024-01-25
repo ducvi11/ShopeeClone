@@ -1,3 +1,3 @@
-import ProductList from './ProductList.tsx'
+import ProductList from './ProductList'
 
 export default ProductList

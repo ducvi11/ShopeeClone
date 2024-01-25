@@ -1,3 +1,3 @@
-import RegisterLayout from './RegisterLayout.tsx'
+import RegisterLayout from './RegisterLayout'
 
 export default RegisterLayout

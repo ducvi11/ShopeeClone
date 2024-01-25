@@ -1,3 +1,3 @@
-import Register from './Register.tsx'
+import Register from './Register'
 
 export default Register

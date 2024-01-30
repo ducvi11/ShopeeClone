@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { produce } from 'immer'
-import { keyBy } from 'lodash'
+import keyBy from 'lodash/keyBy'
 import React, { useContext, useEffect, useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -65,7 +65,7 @@ export default function Cart() {
   useEffect(() => {
     setExtendedPurchases((prev) => {
       const extendedPurchasesObject = keyBy(prev, '_id')
-      //console.log(extendedPurchaseObject)
+      console.log(extendedPurchasesObject)
       return (
         purchasesInCart?.map((purchase) => {
           const isChoosenPurchaseFromLocation = choosenPurchaseIdFromLocation === purchase._id

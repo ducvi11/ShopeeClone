@@ -65,7 +65,7 @@ export default function Cart() {
   useEffect(() => {
     setExtendedPurchases((prev) => {
       const extendedPurchasesObject = keyBy(prev, '_id')
-      console.log(extendedPurchasesObject)
+      //console.log(extendedPurchasesObject)
       return (
         purchasesInCart?.map((purchase) => {
           const isChoosenPurchaseFromLocation = choosenPurchaseIdFromLocation === purchase._id
